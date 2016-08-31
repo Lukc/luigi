@@ -133,7 +133,7 @@ end
 
 Backend.SpriteBatch = require((...) .. '.spritebatch')
 
-Backend.draw = function (drawable, x, y, sx, sy)
+Backend.draw = function (drawable, x, y, r, sx, sy, ox, oy)
     if drawable.draw then
         return drawable:draw(x, y, sx, sy)
     end
@@ -153,9 +153,17 @@ Backend.draw = function (drawable, x, y, sx, sy)
     -- For example http://stackoverflow.com/questions/28218906
     sdl.renderDrawPoint(drawable.sdlRenderer, -1, -1)
 
+    if r then
+        r = r * 360 / math.pi / 2
+    end
+
+    if ox and oy then
+        center = sdl.Point(ox, oy)
+    end
+
     -- Draw the image.
-    sdl.renderCopy(drawable.sdlRenderer, drawable.sdlTexture,
-        nil, sdl.Rect(x, y, w, h))
+    sdl.renderCopyEx(drawable.sdlRenderer, drawable.sdlTexture,
+        nil, sdl.Rect(x, y, w, h), r or 0, center, 0)
 end
 
 Backend.drawRectangle = function (mode, x, y, w, h)
