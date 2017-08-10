@@ -86,10 +86,12 @@ Backend.run = function ()
                 callback.mousemoved(motion.x, motion.y)
             elseif event.type == sdl.KEYDOWN then
                 local key = Keyboard.stringByKeycode[event.key.keysym.sym] or 'unknown'
-                callback.keypressed(key, event.key['repeat'])
+                local scanCode = Keyboard.stringByScancode[event.key.keysym.scancode] or 'unknown'
+                callback.keypressed(key, scanCode, event.key['repeat'])
             elseif event.type == sdl.KEYUP then
                 local key = Keyboard.stringByKeycode[event.key.keysym.sym] or 'unknown'
-                callback.keyreleased(key, event.key['repeat'])
+                local scanCode = Keyboard.stringByScancode[event.key.keysym.scancode] or 'unknown'
+                callback.keyreleased(key, scanCode, event.key['repeat'])
             elseif event.type == sdl.TEXTINPUT then
                 callback.textinput(ffi.string(event.text.text))
             elseif event.type == sdl.MOUSEWHEEL then
@@ -350,10 +352,10 @@ function Backend.show (layout)
             return input:handleMove(layout, x, y)
         end
     end)
-    hook(layout, 'keypressed', function (key, isRepeat)
-        return input:handleKeyPress(layout, key, Backend.getMousePosition())
+    hook(layout, 'keypressed', function (key, scanCode, isRepeat)
+        return input:handleKeyPress(layout, key, scanCode, Backend.getMousePosition())
     end)
-    hook(layout, 'keyreleased', function (key)
+    hook(layout, 'keyreleased', function (key, scanCode)
         return input:handleKeyRelease(layout, key, Backend.getMousePosition())
     end)
     hook(layout, 'textinput', function (text)
